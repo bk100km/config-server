@@ -15,11 +15,13 @@ spring:
           search-locations: classpath:/config
         git:
           # Git Backend가 설정 레포지토리를 클론해 올 원격 URI입니다.
-          uri: https://github.com/your-username/config-repo
+          uri: https://github.com/bk100km/config-repo
           # 기본 브랜치 (예: main, develop)
           default-label: main
           # config 파일이 있는 경로 (repo 루트면 .)
-          search-paths: .
+          search-paths:
+            - application/**
+            - framework/**
           # 애플리케이션 기동 시점에 레포를 미리 클론합니다.
           clone-on-start: true
 
@@ -27,4 +29,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,env,loggers,metrics,mappings,http exchanges
+        include: health,info,env,loggers,metrics,mappings,httpexchanges
+
+logging:
+  level:
+    org.springframework.boot.context.config: TRACE
