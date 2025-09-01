@@ -1,0 +1,30 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    # native, git
+    active: git
+  cloud:
+    config:
+      server:
+        native:
+          # 설정 파일을 어디에서 찾을지 경로를 지정합니다.
+          search-locations: classpath:/config
+        git:
+          # Git Backend가 설정 레포지토리를 클론해 올 원격 URI입니다.
+          uri: https://github.com/your-username/config-repo
+          # 기본 브랜치 (예: main, develop)
+          default-label: main
+          # config 파일이 있는 경로 (repo 루트면 .)
+          search-paths: .
+          # 애플리케이션 기동 시점에 레포를 미리 클론합니다.
+          clone-on-start: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
