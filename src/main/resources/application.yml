@@ -27,4 +27,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,env,loggers,metrics,mappings,http exchanges
