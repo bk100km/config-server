@@ -119,23 +119,23 @@ jobs:
     - name: 🔐 Setup SSH
       uses: webfactory/ssh-agent@v0.8.0
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ secrets.DEPLOY_SERVER_SSH_PRIVATE_KEY }}
     
     - name: 🚀 Deploy to server
       run: |
         echo "🚀 Starting deployment..."
         
         # SSH 호스트 키 추가
-        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ secrets.DEPLOY_SERVER_IP }} >> ~/.ssh/known_hosts
         
         echo "📂 Creating deployment directory..."
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p /opt/config-server"
+        ssh ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_IP }} "mkdir -p /opt/config-server"
         
         echo "📦 Copying JAR file to server..."
-        scp ./artifacts/*.jar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/config-server/${{ env.JAR_NAME }}.jar
+        scp ./artifacts/*.jar ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_IP }}:/opt/config-server/${{ env.JAR_NAME }}.jar
         
         echo "🔄 Restarting service..."
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
+        ssh ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_IP }} '
           systemctl --user stop config-server || true
           systemctl --user start config-server
           systemctl --user enable config-server
@@ -150,7 +150,7 @@ jobs:
         
         # 헬스체크 (최대 5번 시도)
         for i in {1..5}; do
-          if curl -f http://${{ secrets.SERVER_HOST }}:8888/actuator/health; then
+          if curl -f http://${{ secrets.DEPLOY_SERVER_IP }}:8888/actuator/health; then
             echo "✅ Health check passed!"
             exit 0
           else
